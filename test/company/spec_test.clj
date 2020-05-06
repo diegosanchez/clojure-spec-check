@@ -13,7 +13,7 @@
 (s/def ::index-of-args (s/cat :source string? :search string?))
 
 (s/fdef my-index-of
-  :args (s/cat :source string? :search string?)
+  :args ::index-of-args
   :ret nat-int?
   :fn #(<= (:ret %) (-> % :args :source count)))
 
