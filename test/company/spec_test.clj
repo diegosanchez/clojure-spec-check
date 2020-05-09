@@ -10,7 +10,9 @@
   [source search]
   (str/index-of source search))
 
-(s/def ::index-of-args (s/cat :source string? :search string?))
+(s/def ::index-of-args (s/cat :source string?
+                              :search (s/alt :string string?
+                                             :char char?)))
 
 (s/fdef my-index-of
   :args ::index-of-args
@@ -38,7 +40,28 @@
 (deftest index-of-args-test-2
   (is (not (s/valid? ::index-of-args ["foo" 3]))))
 
-(deftest index-of-args-test-conform-1
-  (let [expected {:source "foo", :search "f"}]
-    (is (= (s/conform ::index-of-args ["foo" "f"]) expected))))
+(deftest conform-alt-test-1
+  (is (=
+       (s/conform
+        (s/alt :string string? :char char?)
+        ["foo"])
+       [:string "foo"])))
 
+(deftest conform-alt-test-2
+  (is (=
+       (s/conform
+        (s/alt :string string? :char char?)
+        [\f])
+       [:char \f])))
+
+(deftest conform-optional-test-1
+  (is (=
+       (s/conform
+        (s/? nat-int?) [])
+       nil)))
+
+(deftest conform-optional-test-2
+  (is (=
+       (s/conform
+        (s/? nat-int?) [1])
+       1)))
