@@ -10,7 +10,7 @@
 (defn foo-gen
   []
   (->> (s/gen (s/int-in 1 100))
-       (gen/fmap #(str "FOO-" ))))
+       (gen/fmap #(str "FOO-" % ))))
 
 (s/def ::id
   (s/spec (s/and string?
@@ -23,6 +23,12 @@
                                         :k keyword?)
                                  (fn [{ :keys [lookup k]}]
                                    (contains? lookup k))))
+(defn lookup-finding-k-gen
+  []
+  (gen/bind
+   (s/gen ::lookup)
+   #(gen/tuple
+     (gen/return %)
+     (gen/elements (keys %)))))
 
 
-;; https://youtu.be/WoFkhE92fqc?list=PLZdCLR02grLrju9ntDh3RGPpWSWBvjwXg&t=307
