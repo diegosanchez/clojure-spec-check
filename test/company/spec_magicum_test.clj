@@ -24,15 +24,36 @@
 (defn hand-but-last [hand]
   (into [] (butlast hand)))
 
+(defn hand-empty? [hand]
+  (empty? hand))
+
+(defn game-board [game]
+  (::board game))
+
+(defn game-hand [game]
+  (::hand game))
+
 (defn laid-down [board hand]
   {::board (into [] (concat board (hand-take-last hand))),
    ::hand (hand-but-last hand)})
 
+(defn in? [coll e]
+  (some #(= e %) coll))
+
 (s/fdef laid-down
   :args (s/cat :board ::board :hand ::hand)
-  :ret ::game)
+  :ret ::game
+  :fn (fn [f]
+        (let [board-ret (game-board (:ret f))
+              board-arg (-> f :args :board)
+              hand-arg (-> f :args :hand)]
+          (if (hand-empty? hand-arg)
+            (= board-ret board-arg)
+            (in? board-ret (last hand-arg))))))
 
 (deftest test-check
-  (is (not= nil
-         (first (stest/check `laid-down)))))
+  (is (=
+       (stest/summarize-results (stest/check `laid-down))
+       {:total 1, :check-passed 1})))
+            
 
