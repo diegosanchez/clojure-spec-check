@@ -5,23 +5,34 @@
             [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as stest]))
 
-;; (require '[clojure.string :as str])
-;; (require '[clojure.spec.alpha :as s])
-;; (require '[clojure.spec.test.alpha :as stest])
-;; (require '[clojure.spec.gen.alpha :as gen])
+(comment
+  (require '[clojure.string :as str])
+  (require '[clojure.spec.alpha :as s])
+  (require '[clojure.spec.test.alpha :as stest])
+  (require '[clojure.spec.gen.alpha :as gen]))
 
 (s/def ::board (s/coll-of int?))
-(s/def ::hand (s/coll-of int?))
+(s/def ::hand (s/coll-of int? :gen-max 5))
 (s/def ::game (s/keys :req [::board ::hand]))
 
+(defn filter-nil [vector]
+  (filter (comp not nil?) vector))
+
+(defn hand-take-last [hand]
+  (filter-nil (vector (peek hand))))
+
+(defn hand-but-last [hand]
+  (into [] (butlast hand)))
 
 (defn laid-down [board hand]
-  {::board board, ::hand hand})
+  {::board (into [] (concat board (hand-take-last hand))),
+   ::hand (hand-but-last hand)})
 
 (s/fdef laid-down
   :args (s/cat :board ::board :hand ::hand)
   :ret ::game)
 
-(deftest test-dummy
-  (is (= 0 0)))
+(deftest test-check
+  (is (not= nil
+         (first (stest/check `laid-down)))))
 
