@@ -2,5 +2,11 @@
 
 Running from cmd line
 ```bash
-    clj -A:runner -A:test
+    clj -A:runner:test
+```
+
+## Run with coverage
+
+```bash
+    clj -A:coverage
 ```
