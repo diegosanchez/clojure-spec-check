@@ -10,3 +10,4 @@ Running from cmd line
 ```bash
     clj -A:coverage
 ```
+
