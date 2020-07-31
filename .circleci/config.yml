@@ -1,8 +1,23 @@
 version: 2
-jobs:
+jobs: 
   build:
     working_directory: ~/app
-    docker: circleci/clojure:openjdk-11
+    docker:
+      - image: circleci/clojure:openjdk-11
     steps:
-      - checkout
+      - checkout 
       - run: clj -A:runner:test
+
+
+
+
+
+
+
+
+
+
+
+
+
+
